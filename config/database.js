@@ -1,35 +1,11 @@
 const mysql = require('mysql2/promise');
 
-// 调试：输出数据库配置（隐藏密码）
-const dbConfig = {
+const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT || 3306,
   user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD ? '***已设置***' : '***未设置***',
-  database: process.env.DB_NAME || 'de_Q',
-};
-
-console.log('数据库配置:', {
-  host: dbConfig.host,
-  port: dbConfig.port,
-  user: dbConfig.user,
-  password: dbConfig.password,
-  database: dbConfig.database,
-});
-console.log('环境变量检查:', {
-  DB_HOST: process.env.DB_HOST || '未设置（使用默认值: localhost)',
-  DB_PORT: process.env.DB_PORT || '未设置（使用默认值: 3306)',
-  DB_USER: process.env.DB_USER || '未设置（使用默认值: root)',
-  DB_PASSWORD: process.env.DB_PASSWORD ? '已设置' : '未设置',
-  DB_NAME: process.env.DB_NAME || '未设置（使用默认值: de_Q)',
-});
-
-const pool = mysql.createPool({
-  host: dbConfig.host,
-  port: dbConfig.port,
-  user: dbConfig.user,
   password: process.env.DB_PASSWORD,
-  database: dbConfig.database,
+  database: process.env.DB_NAME || 'de_Q',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,

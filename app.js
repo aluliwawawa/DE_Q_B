@@ -85,14 +85,7 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-const HOST = process.env.HOST || '0.0.0.0'; // 监听所有网络接口，允许真机调试访问
-
-// 调试：输出环境变量信息
-console.log('=== 环境变量检查 ===');
-console.log('PORT:', process.env.PORT || '未设置（使用默认值: 3000)');
-console.log('NODE_ENV:', process.env.NODE_ENV || '未设置');
-console.log('DB_HOST:', process.env.DB_HOST || '未设置（将使用默认值: localhost)');
-console.log('==================');
+const HOST = process.env.HOST || '0.0.0.0'; // 监听所有网络接口，允许外部访问
 
 app.listen(PORT, HOST, () => {
   console.log(`服务器运行在 http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`);

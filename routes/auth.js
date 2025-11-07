@@ -114,11 +114,9 @@ router.post('/dev/login', async (req, res, next) => {
 
 router.post('/wechat/login', async (req, res, next) => {
   try {
-    console.log('收到微信登录请求:', { body: req.body, hasAppId: !!process.env.WECHAT_APPID, hasSecret: !!process.env.WECHAT_APPSECRET });
     const { code, nickname } = req.body;
 
     if (!code) {
-      console.error('缺少code参数');
       return res.status(400).json({
         code: 400,
         message: '缺少code参数',
@@ -127,7 +125,7 @@ router.post('/wechat/login', async (req, res, next) => {
     }
 
     if (!process.env.WECHAT_APPID || !process.env.WECHAT_APPSECRET) {
-      console.error('微信配置缺失:', { hasAppId: !!process.env.WECHAT_APPID, hasSecret: !!process.env.WECHAT_APPSECRET });
+      console.error('微信配置缺失');
       return res.status(500).json({
         code: 500,
         message: '服务器配置错误：缺少微信AppID或AppSecret',
@@ -135,7 +133,6 @@ router.post('/wechat/login', async (req, res, next) => {
       });
     }
 
-    console.log('调用微信API获取openid...');
     const wechatResponse = await axios.get('https://api.weixin.qq.com/sns/jscode2session', {
       params: {
         appid: process.env.WECHAT_APPID,
@@ -145,7 +142,6 @@ router.post('/wechat/login', async (req, res, next) => {
       }
     });
 
-    console.log('微信API响应:', { errcode: wechatResponse.data.errcode, errmsg: wechatResponse.data.errmsg, hasOpenid: !!wechatResponse.data.openid });
     const { openid, session_key, errcode, errmsg } = wechatResponse.data;
 
     if (errcode) {
@@ -158,15 +154,13 @@ router.post('/wechat/login', async (req, res, next) => {
     }
 
     if (!openid) {
-      console.error('获取openid失败，响应数据:', wechatResponse.data);
+      console.error('获取openid失败');
       return res.status(400).json({
         code: 400,
         message: '获取openid失败',
         data: null
       });
     }
-
-    console.log('成功获取openid:', openid);
 
     let [users] = await db.query(
       'SELECT * FROM users WHERE openid = ?',
